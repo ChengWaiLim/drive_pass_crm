@@ -1,0 +1,136 @@
+$great-big-pc-media: 9999px
+$big-pc-media: 1904px
+$pc-media: 1264px
+$pad-media: 960px
+$phone-media: 750px
+
+html
+    .v-application
+        font: 18px Helvetica !important
+        h1
+            font-size: 2rem
+        h2
+            font-size: 1.5rem
+        h3
+            font-size: 1.17rem
+        h4
+            font-size: 1rem
+        h5
+            font-size: .83rem
+        h6
+            font-size: .67rem
+@media all and (max-width: $great-big-pc-media) 
+    html
+        font: 32px Helvetica !important
+@media all and (max-width: $big-pc-media) 
+    html
+        font: 28px Helvetica !important
+@media all and (max-width: $pc-media) 
+    html
+        font: 24px Helvetica !important
+@media all and (max-width:$pad-media) 
+    html
+        font: 22px Helvetica !important
+@media all and (max-width:$phone-media) 
+    html
+        font: 22px Helvetica !important
+$em-size: 160
+@mixin margin-padding-mixin 
+    @for $i from 1 through $em-size 
+        .mb-#{$i}
+            margin-bottom: #{$i/10}em
+        .mr-#{$i}
+            margin-right: #{$i/10}em
+        .ml-#{$i}
+            margin-left: #{$i/10}em
+        .mt-#{$i}
+            margin-top: #{$i/10}em
+        .m-#{$i}
+            margin: #{$i/10}em
+        .p-#{$i}
+            padding: #{$i/10}em
+        .pl-#{$i}
+            padding-left: #{$i/10}em
+        .pr-#{$i}
+            padding-right: #{$i/10}em
+        .pt-#{$i}
+            padding-top: #{$i/10}em
+        .pb-#{$i}
+            padding-bottom: #{$i/10}em
+@include margin-padding-mixin 
+
+html
+    width: 100%
+    height: 100%
+body
+    width: 100%
+    height: 100%
+    margin: 0px
+#__nuxt
+    margin: 0px
+    width: 100%
+    height: 100%
+#__layout
+    width: 100%
+    height: 100%
+.file-upload-input
+  position: absolute
+.space-between-row
+    display: flex
+    justify-content: space-between
+    align-items: center
+.row //deprecated
+    display: flex
+    &.space-between
+        justify-content: space-between
+    &.align-items-center
+        align-items: center
+    &.align-items-flex-end
+        align-items: flex-end
+.base-row
+    display: flex
+    &.space-between
+        justify-content: space-between
+    &.align-items-center
+        align-items: center
+    &.align-items-flex-end
+        align-items: flex-end
+.float-right
+    float: right
+.float-left
+    float: left
+.main-color
+    color: #007AFF
+
+@keyframes fade-in
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+.layout-enter-active, .layout-leave-active 
+  transition: opacity .8s
+
+.layout-enter, .layout-leave-active 
+  opacity: 0
+.slide-fade-enter-active 
+  height: 100%
+  transition: all 2s ease
+
+.slide-fade-leave-active 
+  height: 100%
+  transition: all 2s cubic-bezier(1.0, 0.5, 0.8, 1.0)
+
+.slide-fade-enter, .slide-fade-leave-to
+  height: 100%
+  transform: translateX(10px)
+  opacity: 0
+
+.bold
+    font-weight: bold
+
+// @font-face 
+//     font-family: "BigCaslon"
+//     src: url('@/assets/BigCaslon.ttf') format('truetype')
+// @font-face 
+//     font-family: "HelveticaNeue"
+//     src: url('@/assets/HelveticaNeue.ttf') format('truetype')

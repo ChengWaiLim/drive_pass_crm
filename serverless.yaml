@@ -1,0 +1,44 @@
+service: driving-king-crm
+frameworkVersion: '3'
+provider:
+  name: aws
+  stage: prd
+  ecr:
+    images:
+      driving-king-crm:
+        path: ./
+        platform: linux/amd64
+  region: ap-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "arn:aws:logs:*:*:*"
+functions:
+  driving-king-crm:
+    image:
+      name: driving-king-crm
+      command:
+        - handler.nuxt
+      entryPoint:
+        - '/lambda-entrypoint.sh'
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
+plugins:
+  - serverless-apigw-binary
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: houseofjoyhk.com
+    basePath: 'driving-king-crm'
+    stage: prd
+    createRoute53Record: true
+  apigwBinary:
+    types:
+      - "*/*"
