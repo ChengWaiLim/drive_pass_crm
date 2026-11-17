@@ -17,20 +17,25 @@
             <v-btn fab dark x-small color="cyan" @click="handleEdit(item)">
                 <v-icon dark> mdi-pencil </v-icon>
             </v-btn>
+            <v-btn fab dark x-small color="red" class="ml-2" @click="handleDelete(item)">
+                <v-icon dark> mdi-delete </v-icon>
+            </v-btn>
         </template>
     </v-data-table>
     <v-dialog v-model="editDialogVisible" width="80%">
-        <user-form title="修改會員" :item="editedItem" @close="handleCloseEdit" @confirm="handleConfirmEdit" :orderList="orderList"/>
+        <user-form title="修改會員" :item="editedItem" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
     </v-dialog>
     <v-dialog v-model="newDialogVisible" width="80%">
-        <user-form title="創建會員" :item="newItem" @close="handleCloseNew" @confirm="handleConfirmNew" :orderList="orderList"/>
+        <user-form title="創建會員" :item="newItem" @close="handleCloseNew" @confirm="handleConfirmNew"/>
     </v-dialog>
 </v-card>
 </template>
 <script lang="js">
 import Vue from "vue";
+import Swal from "sweetalert2"
 import BaseMixin from "@/components/mixins/BaseMixin"
 import BaseRequest from "@/static/BaseRequest";
+import UserError from "@/static/UserError";
 export default{
     layout: "cmsLayout",
     mixins: [BaseMixin],
@@ -45,31 +50,14 @@ export default{
                 this.$nuxt.$loading.start()
                 var res = await BaseRequest.getUserAll()
                 this.user = res.User
-                this.user.forEach(f => {
-                    if(f.memberType == 'NORMAL'){
-                        f.code = "N-" + f.code
-                    }
-                    else if(f.memberType == 'SUPER')
-                        f.code = "P-" + f.code
-                })
-            }catch(e){
-                this.alert(e)
                 this.$nuxt.$loading.finish()
-            }finally{
+            }catch(e){
                 this.$nuxt.$loading.finish()
             }
         },
-        async handleEdit(item){
-            this.$nuxt.$loading.start()
-            var res = await BaseRequest.getOrderByUserID(item.ID)
-            this.orderList = res.Order
-            this.orderList.forEach(f => {
-                f.shippingFee = f.shippingFee/100
-                f.totalAmount = f.totalAmount/100
-            })
-            this.editedItem = Object.assign({}, item)
+        handleEdit(item){
             this.editDialogVisible = true
-            this.$nuxt.$loading.finish()
+            this.editedItem = Object.assign({}, item)
         },
         handleCloseEdit(){
             this.editedItem = {}
@@ -84,13 +72,27 @@ export default{
                 await this.init()
                 this.successAlert("更新成功")
             }catch(e){
-                this.alert(e)
+                this.alertUserError(e)
             }finally{
                 this.editDialogVisible = false
                 await this.init()
                 this.$nuxt.$loading.finish()
                 this.editedItem = {}
             }
+        },
+        alertUserError(error){
+            var code = error instanceof Error ? error.message : error
+            this.alert(UserError.text(code))
+        },
+        checkUserValid(user){
+            if(user.username == null || String(user.username).trim() == "")
+                throw new Error(UserError.USERNAME_INVALID)
+            else if(user.phone == null || user.phone === "" || isNaN(user.phone) || Number(user.phone) <= 0)
+                throw new Error(UserError.PHONE_INVALID)
+            else if(user.hkid == null || String(user.hkid).trim() == "")
+                throw new Error(UserError.HKID_INVALID)
+            else if(user.address == null || String(user.address).trim() == "")
+                throw new Error(UserError.ADDRESS_INVALID)
         },
         handleNew(){
             this.newDialogVisible = true
@@ -109,64 +111,64 @@ export default{
                 await this.init()
                 this.successAlert("創建成功")
             }catch(e){
-                this.alert(e)
+                this.alertUserError(e)
             }finally{
                 this.newDialogVisible = false
                 await this.init()
                 this.$nuxt.$loading.finish()
-                this.newItem = this.newEmptyProduct()
+                this.newItem = this.newEmptyUser()
             }
         },
-        checkUserValid(user){
-            if(user.mobile === null || user.mobile == "")
-                throw new Error("請填寫手機號碼")
-            else if(user.password === null || user.password == "")
-                throw new Error("請填寫密碼")
-            else if(user.firstName === null || user.firstName == "")
-                throw new Error("請填寫名字")
-            else if(user.lastName === null || user.lastName == "")
-                throw new Error("請填寫姓氏")
-            else if(user.email === null || user.email == "")
-                throw new Error("請填寫電郵")
-            else if(user.memberType === null || user.memberType == "")
-                throw new Error("請填寫會員種類")
-        }
+        async handleDelete(item){
+            var result = await Swal.fire({
+                icon: "warning",
+                title: "確認刪除？",
+                showCancelButton: true,
+                confirmButtonText: "刪除",
+                cancelButtonText: "取消",
+            })
+            if(!result.isConfirmed)
+                return
+            try{
+                this.$nuxt.$loading.start()
+                await BaseRequest.deleteUser(item)
+                await this.init()
+                this.successAlert("刪除成功")
+            }catch(e){
+                this.alertUserError(e)
+            }finally{
+                this.$nuxt.$loading.finish()
+            }
+        },
     },
     data(){
         return {
-            user: [],
-            search: "",
-            dialogVisible: false,
-            newDialogVisible: false,
-            editDialogVisible: false,
             editedItem: {},
             newItem: {},
-            orderList: [],
+            editDialogVisible: false,
+            newDialogVisible: false,
+            search: "",
+            user: [],
             headers: [
                 {
-                    text: '會員號碼',
+                    text: '會員名稱',
                     filterable: true,
-                    value: 'code',
+                    value: 'username',
                 },
                 {
-                    text: '手機',
+                    text: '電話號碼',
                     filterable: true,
-                    value: 'mobile',
+                    value: 'phone',
                 },
                 {
-                    text: '名字',
+                    text: '身份證號碼',
                     filterable: true,
-                    value: 'firstName',
+                    value: 'hkid',
                 },
                 {
-                    text: '姓氏',
+                    text: '地址',
                     filterable: true,
-                    value: 'lastName',
-                },
-                {
-                    text: '電郵',
-                    filterable: true,
-                    value: 'email',
+                    value: 'address',
                 },
                 { text: '修改', value: 'actions', sortable: false },
             ]
@@ -175,12 +177,4 @@ export default{
 }
 </script>
 <style lang="sass" scoped>
-::v-deep .v-input__slot fieldset 
-    color: black !important
-::v-deep input
-    color: black !important
-::v-deep .v-label
-    color: black !important
-
-
 </style>

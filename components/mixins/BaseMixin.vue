@@ -18,65 +18,23 @@ export default{
             }
             return false
         },
-        newEmptyProduct(){
+        newEmptyCoach(){
             return {
-                categoryID: null,
-                productName: null,
+                coachName: null,
+                phone: null,
+                license: null,
+                area: null,
+                language: null,
                 price: null,
-                comboPrice: null,
-                extraPrice: null,
-                isSoldOut: false
-            }
-        },
-        newEmptyCombo(){
-            return {
-                comboName: null,
-                categoryIDList: [],
-                price: null,
-                comboLineList: [],
-                freeLineList: []
-            }
-        },
-        newEmptyShipping(){
-            return {
-                districtName: null,
-                shippingFee: null,
-                conditionList: [],
-                detail:[]
+                createdDate: null,
             }
         },
         newEmptyUser(){
             return {
-                mobile: null,
-                password: null,
-                deliveryAddress: null,
-                shippingDistrictID: null,
-                districtName: null,
-                firstName: null,
-                lastName: null,
-                email: null,
-                isSoldOut: false,
-                memberType: null,
-                isUsedFreeDrinks: false,
-                freeDrinkUsedDate: null,
-                isAllowMarketing: false,
-
-            }
-        },
-        newEmptyHomePageBanner(){
-            return {
-                name: null,
-                path: null,
-                file: null,
-                type: "Home"
-            }
-        },
-        newEmptyWeddingBanner(){
-            return {
-                name: null,
-                path: null,
-                file: null,
-                type: "Wedding"
+                username: null,
+                phone: null,
+                hkid: null,
+                address: null,
             }
         },
         isCurrentTokenValid(){

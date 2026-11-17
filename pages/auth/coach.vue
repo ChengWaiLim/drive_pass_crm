@@ -9,37 +9,27 @@
         </v-list-item-content>
         <v-btn color="primary" @click="handleNew">創建師傅</v-btn>
     </v-list-item>
-    <v-data-table :headers="headers" :items="product" item-key="ID" :search="search" :custom-filter="customSearch" dense>
+    <v-data-table :headers="headers" :items="coach" item-key="ID" :search="search" :custom-filter="customSearch" dense>
         <template v-slot:top>
             <v-text-field v-model="search" label="Search" class="mx-4"></v-text-field>
         </template>
         <template v-slot:item.price="{ item }">
             ${{showStripePrice(item.price)}}
         </template>
-        <template v-slot:item.comboPrice="{ item }">
-            ${{showStripePrice(item.comboPrice)}}
-        </template>
-        <template v-slot:item.extraPrice="{ item }">
-            ${{showStripePrice(item.extraPrice)}}
-        </template>
-        <template v-slot:item.categoryID="{ item }">
-            <v-chip color="primary">{{getCategoryNameByID(item.categoryID)}}</v-chip> 
-        </template>
-        <!-- <template v-slot:item.isSoldOut="{ item }">
-            <span v-show="item.isSoldOut" style="color: red">Yes</span>
-            <span v-show="!item.isSoldOut" style="color: green">No</span>
-        </template> -->
         <template v-slot:item.actions="{ item }">
             <v-btn fab dark x-small color="cyan" @click="handleEdit(item)">
                 <v-icon dark> mdi-pencil </v-icon>
             </v-btn>
+            <v-btn fab dark x-small color="red" @click="handleDelete(item)">
+                <v-icon dark> mdi-delete </v-icon>
+            </v-btn>
         </template>
     </v-data-table>
     <v-dialog v-model="editDialogVisible" width="80%">
-        <product-form title="修改師傅" :item="editedItem" :categoryList="category" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
+        <coach-form title="修改師傅" :item="editedItem" :categoryList="category" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
     </v-dialog>
     <v-dialog v-model="newDialogVisible" width="80%">
-        <product-form title="創建師傅" :item="newItem" :categoryList="category" @close="handleCloseNew" @confirm="handleConfirmNew"/>
+        <coach-form title="創建師傅" :item="newItem" :categoryList="category" @close="handleCloseNew" @confirm="handleConfirmNew"/>
     </v-dialog>
 </v-card>
 </template>
@@ -47,6 +37,7 @@
 import Vue from "vue";
 import BaseMixin from "@/components/mixins/BaseMixin"
 import BaseRequest from "@/static/BaseRequest";
+import CoachError from "@/static/CoachError";
 export default{
     layout: "cmsLayout",
     mixins: [BaseMixin],
@@ -59,10 +50,8 @@ export default{
         async init(){
             try{
                 this.$nuxt.$loading.start()
-                var res = await BaseRequest.getProductAll()
-                this.product = res.Product
-                var res = await BaseRequest.getCategoryAll()
-                this.category = res.Category
+                var res = await BaseRequest.getCoachAll()
+                this.coach = res.Coach
                 this.$nuxt.$loading.finish()
             }catch(e){
                 this.$nuxt.$loading.finish()
@@ -72,8 +61,6 @@ export default{
             this.editDialogVisible = true
             this.editedItem = Object.assign({}, item)
             this.editedItem.price = this.editedItem.price/100
-            this.editedItem.comboPrice = this.editedItem.comboPrice/100
-            this.editedItem.extraPrice = this.editedItem.extraPrice/100
         },
         handleCloseEdit(){
             this.editedItem = {}
@@ -81,21 +68,15 @@ export default{
         },
         async handleConfirmEdit(file){
             try{
-                if(file != null){
-                    var imageResult = await BaseRequest.uploadImage({file: file})
-                    this.editedItem.path = imageResult.path
-                }
-                this.checkProductValid(this.editedItem)
+                this.checkCoachValid(this.editedItem)
                 this.editDialogVisible = false
                 this.editedItem.price = this.editedItem.price * 100
-                this.editedItem.comboPrice = this.editedItem.comboPrice * 100
-                this.editedItem.extraPrice = this.editedItem.extraPrice * 100
                 this.$nuxt.$loading.start()
-                var res = await BaseRequest.updateProduct(this.editedItem)
+                var res = await BaseRequest.updateCoach(this.editedItem)
                 await this.init()
                 this.successAlert("更新成功")
             }catch(e){
-                this.alert(e)
+                this.alertCoachError(e)
             }finally{
                 this.editDialogVisible = false
                 await this.init()
@@ -103,32 +84,31 @@ export default{
                 this.editedItem = {}
             }
         },
-        checkProductValid(product){
-            if(product.productName == null || product.productName == "")
-                throw new Error("Product Name Invalid")
-            else if(product.price == null || product.price == "" || product.price <= 0 || isNaN(product.price))
-                throw new Error("Price Invalid")
-            else if(product.comboPrice == null || product.comboPrice < 0 || isNaN(product.comboPrice))
-                throw new Error("Combo Price Invalid")
-            else if(product.extraPrice == null || product.extraPrice < 0 || isNaN(product.extraPrice))
-                throw new Error("Additional Price Invalid")
-            else if(product.categoryID == null)
-                throw new Error("Category Invalid")
-            // else if(product.isSoldOut === null)
-            //     throw new Error("Sold out Invalid")
+        alertCoachError(error){
+            var code = error instanceof Error ? error.message : error
+            this.alert(CoachError.text(code))
         },
-        getCategoryNameByID(categoryID){
-            var category = this.category.find(f => f.ID == categoryID)
-            if(category != null)
-                return category.categoryName
+        checkCoachValid(coach){
+            if(coach.coachName == null || String(coach.coachName).trim() == "")
+                throw new Error(CoachError.COACH_NAME_INVALID)
+            else if(coach.phone == null || coach.phone === "" || isNaN(coach.phone) || Number(coach.phone) <= 0)
+                throw new Error(CoachError.PHONE_INVALID)
+            else if(coach.license == null || String(coach.license).trim() == "")
+                throw new Error(CoachError.LICENSE_INVALID)
+            else if(coach.area == null || String(coach.area).trim() == "")
+                throw new Error(CoachError.AREA_INVALID)
+            else if(coach.language == null || coach.language === "")
+                throw new Error(CoachError.LANGUAGE_INVALID)
+            else if(coach.price == null || coach.price === "" || isNaN(coach.price) || Number(coach.price) <= 0)
+                throw new Error(CoachError.PRICE_INVALID)
         },
         handleNew(){
             this.newDialogVisible = true
-            this.newItem = this.newEmptyProduct()
+            this.newItem = this.newEmptyCoach()
         },
         handleCloseNew(){
             this.newDialogVisible = false
-            this.newItem = this.newEmptyProduct()
+            this.newItem = this.newEmptyCoach()
         },
         async handleConfirmNew(file){
             try{
@@ -136,22 +116,31 @@ export default{
                     var imageResult = await BaseRequest.uploadImage({file: file})
                     this.newItem.path = imageResult.path
                 }
-                this.checkProductValid(this.newItem)
+                this.checkCoachValid(this.newItem)
                 this.newDialogVisible = false
                 this.newItem.price = this.newItem.price * 100
-                this.newItem.comboPrice = this.newItem.comboPrice * 100
-                this.newItem.extraPrice = this.newItem.extraPrice * 100
                 this.$nuxt.$loading.start()
-                var res = await BaseRequest.addProduct(this.newItem)
+                var res = await BaseRequest.addCoach(this.newItem)
                 await this.init()
                 this.successAlert("創建成功")
             }catch(e){
-                this.alert(e)
+                this.alertCoachError(e)
             }finally{
                 this.newDialogVisible = false
                 await this.init()
                 this.$nuxt.$loading.finish()
-                this.newItem = this.newEmptyProduct()
+                this.newItem = this.newEmptyCoach()
+            }
+        },
+        async handleDelete(item){
+            if(confirm("確認刪除?")){
+                try{
+                    await BaseRequest.deleteCoach({ID: item.ID})
+                    this.successAlert("刪除成功")
+                    await this.init()
+                }catch(e){
+                    this.alert(e)
+                }
             }
         }
     },
@@ -162,13 +151,18 @@ export default{
             editDialogVisible: false,
             newDialogVisible: false,
             search: "",
-            product: [],
+            coach: [],
             category: [],
             headers: [
                 {
                     text: '師傅名稱',
                     filterable: true,
-                    value: 'name',
+                    value: 'coachName',
+                },
+                {
+                    text: '電語號碼',
+                    filterable: true,
+                    value: 'phone',
                 },
                 {
                     text: '價格',
@@ -176,19 +170,19 @@ export default{
                     value: 'price',
                 },
                 {
-                    text: '追加價格',
+                    text: '牌照',
                     filterable: true,
-                    value: 'comboPrice',
+                    value: 'license',
                 },
                 {
-                    text: '額外價格',
+                    text: '地區',
                     filterable: true,
-                    value: 'extraPrice',
+                    value: 'area',
                 },
                 {
-                    text: '種類',
+                    text: '語言',
                     filterable: true,
-                    value: 'categoryID',
+                    value: 'language',
                 },
                 // {
                 //     text: 'Sold Out',

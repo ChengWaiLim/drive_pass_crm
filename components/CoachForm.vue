@@ -4,44 +4,29 @@
             <v-container>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model="item.productName" hide-details label="師傅名稱" outlined></v-text-field>
+                        <v-text-field v-model="item.coachName" hide-details label="師傅名稱" outlined></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-select v-model="item.categoryID" hide-details label="種類" outlined :items="categoryList" item-text="categoryName" item-value="ID"></v-select>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col cols="6">
-                        <v-text-field v-model="item.price" hide-details label="價格" outlined type="number" min="0"></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-text-field v-model="item.comboPrice" hide-details label="追加價格" outlined type="number"></v-text-field>
+                        <v-text-field v-model="item.phone" hide-details label="電語號碼" outlined type="number"></v-text-field>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model="item.extraPrice" hide-details label="額外價格" outlined type="number" min="0"></v-text-field>
+                        <v-text-field v-model="item.license" hide-details label="牌照" outlined></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="item.createdDate" hide-details label="創建日期" outlined disabled></v-text-field>
+                        <v-text-field v-model="item.area" hide-details label="地區" outlined></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field v-model="item.language" hide-details label="語言" outlined min="0"></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                        <!-- <v-switch v-model="item.isSoldOut" label="是否允許出售?"></v-switch> -->
-                        <v-select v-model="item.isSoldOut" hide-details label="是否允許出售" outlined :items="soldOutList" item-text="name" item-value="value"></v-select>
+                        <v-text-field v-model="item.price" hide-details label="價格" outlined></v-text-field>
                     </v-col>
                 </v-row>
                 <v-divider class="mt-4 mb-4"/>
-                <v-row v-if="imageUrl != null && imageUrl != ''">
-                    <v-img :aspect-ratio="16/9" max-height="400px" :src="imageUrl"></v-img>
-                </v-row>
-                <v-row v-else-if="item.path != null && item.path != ''">
-                    <v-img :aspect-ratio="16/9" max-height="400px" :src="item.path"></v-img>
-                </v-row>
-                <v-row>
-                    <v-col cols="12">
-                        <v-file-input v-model="file" counter show-size @change="onFileChange" accept="image/png, image/jpeg" :rules="rules"></v-file-input>
-                    </v-col>
-                </v-row>
             </v-container>
             <v-card-actions>
                 <v-spacer></v-spacer>

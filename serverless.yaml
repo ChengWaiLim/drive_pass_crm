@@ -1,11 +1,11 @@
-service: driving-king-crm
+service: drive-pass-crm
 frameworkVersion: '3'
 provider:
   name: aws
-  stage: prd
+  stage: dev
   ecr:
     images:
-      driving-king-crm:
+      drive-pass-crm:
         path: ./
         platform: linux/amd64
   region: ap-east-1
@@ -19,9 +19,9 @@ provider:
             - logs:PutLogEvents
           Resource: "arn:aws:logs:*:*:*"
 functions:
-  driving-king-crm:
+  drive-pass-crm:
     image:
-      name: driving-king-crm
+      name: drive-pass-crm
       command:
         - handler.nuxt
       entryPoint:
@@ -36,7 +36,7 @@ plugins:
 custom:
   customDomain:
     domainName: houseofjoyhk.com
-    basePath: 'driving-king-crm'
+    basePath: 'drive-pass-crm'
     stage: prd
     createRoute53Record: true
   apigwBinary:

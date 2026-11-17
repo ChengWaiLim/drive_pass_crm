@@ -47,8 +47,6 @@ export default{
         return {
             items: [
                 { title: '師傅', icon: 'mdi-school', route: "/auth/coach" },
-                { title: '訂單', icon: 'mdi-list-box', route: "/auth/order" },
-                { title: '會員', icon: 'mdi-account', route: "/auth/user" },
             ],
             right: null,
             testingTitle: process.env.testingTitle

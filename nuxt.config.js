@@ -3,8 +3,8 @@ module.exports = {
   mode: "spa",
   loading: '~/components/LoadingComponent.vue',
   head: {
-    titleTemplate: 'Driving King CRM',
-    title: 'Driving King CRM',
+    titleTemplate: 'Drive Pass CRM',
+    title: 'Drive Pass CRM',
     htmlAttrs: {
       lang: 'en'
     },
@@ -19,7 +19,7 @@ module.exports = {
     ],
   },
   router: {
-    base: "/driving-king-crm",
+    base: "/drive-pass-crm",
   },
   css: [
     "@/static/main.sass",
@@ -36,6 +36,6 @@ module.exports = {
   },
   env: {
     testingTitle: "",
-    serverUrl: "https://pd9gjd9lte.execute-api.ap-east-1.amazonaws.com"
+    serverUrl: "https://cm7xa7743k.execute-api.ap-east-1.amazonaws.com"
   },
 }
