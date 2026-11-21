@@ -12,18 +12,23 @@
                 </v-row>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model="item.license" hide-details label="牌照" outlined></v-text-field>
+                        <v-select v-model="item.license" multiple hide-details label="牌照" outlined :items="licenseList" item-text="name_zh" item-value="code"></v-select>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="item.area" hide-details label="地區" outlined></v-text-field>
+                        <v-select v-model="item.area" multiple hide-details label="地區" outlined :items="areaList" item-text="name_zh" item-value="code"></v-select>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
-                        <v-text-field v-model="item.language" hide-details label="語言" outlined min="0"></v-text-field>
+                        <v-select v-model="item.language" hide-details label="語言" outlined :items="languageList" item-text="name" item-value="code"></v-select>
                     </v-col>
                     <v-col cols="6">
                         <v-text-field v-model="item.price" hide-details label="價格" outlined></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-switch v-model="item.isEnable" hide-details label="啟用"></v-switch>
                     </v-col>
                 </v-row>
                 <v-divider class="mt-4 mb-4"/>
@@ -51,55 +56,36 @@ export default{
                 return {}
             }
         },
-        categoryList: {
+        areaList: {
             type: Array,
             required: true,
             default: () => {
                 return []
             }
-        }
+        },
+        licenseList: {
+            type: Array,
+            required: true,
+            default: () => {
+                return []
+            }
+        },
     },
     methods: {
         handleCloseEdit(){
             this.$emit("close")
         },
         handleConfirmEdit(){
-            if(this.file != null &&  this.file.size < 2000000){
-                this.$emit("confirm", this.file)
-            }else{
-                this.$emit("confirm")
-            }
-            this.file = null
-            this.imageUrl = null
-        },
-        onFileChange(file) {
-            if (!file) {
-                return;
-            }
-            this.createImage(file);
-        },
-        createImage(file) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                this.imageUrl = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        },
+            this.$emit("confirm")
+        }
     },
     data(){
         return {
-            soldOutList: [
-                {
-                    name: "是",
-                    value: false
-                },
-                {
-                    name: "否",
-                    value: true
-                }
-            ],
-            imageUrl: null,
-            file: null,
+            languageList: [
+                { name: "中文繁體", code: "ZH" },
+                { name: "中文簡體", code: "CN" },
+                { name: "英文", code: "EN" },
+            ]
         }
     }
 }

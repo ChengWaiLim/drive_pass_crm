@@ -13,12 +13,12 @@ CoachError.LANGUAGE_INVALID = "LANGUAGE_INVALID"
 CoachError.PRICE_INVALID = "PRICE_INVALID"
 
 CoachError.MESSAGE = {
-    [CoachError.COACH_NAME_INVALID]: "Coach Name Invalid",
-    [CoachError.PHONE_INVALID]: "Phone Invalid",
-    [CoachError.LICENSE_INVALID]: "License Invalid",
-    [CoachError.AREA_INVALID]: "Area Invalid",
-    [CoachError.LANGUAGE_INVALID]: "Language Invalid",
-    [CoachError.PRICE_INVALID]: "Price Invalid",
+    [CoachError.COACH_NAME_INVALID]: "師傅名稱無效",
+    [CoachError.PHONE_INVALID]: "電話號碼無效",
+    [CoachError.LICENSE_INVALID]: "牌照無效",
+    [CoachError.AREA_INVALID]: "地區無效",
+    [CoachError.LANGUAGE_INVALID]: "語言無效",
+    [CoachError.PRICE_INVALID]: "價格無效",
 }
 
 export default CoachError

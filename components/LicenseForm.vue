@@ -1,0 +1,63 @@
+<template>
+        <v-card>
+            <v-card-title class="text-h5">{{title}}</v-card-title>
+            <v-container>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field v-model="item.code" hide-details label="代碼" outlined></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field v-model="item.name_zh" hide-details label="繁體名稱" outlined></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field v-model="item.name_cn" hide-details label="簡體名稱" outlined></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field v-model="item.name_en" hide-details label="英文名稱" outlined></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="6">
+                        <v-switch v-model="item.isEnable" hide-details label="啟用"></v-switch>
+                    </v-col>
+                </v-row>
+                <v-divider class="mt-4 mb-4"/>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="handleCloseEdit">取消</v-btn>
+                <v-btn color="green darken-1" text @click="handleConfirmEdit">確認</v-btn>
+            </v-card-actions>
+        </v-card>
+</template>
+<script lang="js">
+import Vue from "vue";
+export default{
+    props: {
+        title: {
+            type: String,
+            required: false,
+            default: ""
+        },
+        item: {
+            type: Object,
+            required: true,
+            default: () => {
+                return {}
+            }
+        },
+    },
+    methods: {
+        handleCloseEdit(){
+            this.$emit("close")
+        },
+        handleConfirmEdit(){
+            this.$emit("confirm")
+        },
+    },
+}
+</script>
+<style lang="sass" scoped>
+</style>

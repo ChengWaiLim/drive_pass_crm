@@ -36,6 +36,7 @@ import Swal from "sweetalert2"
 import BaseMixin from "@/components/mixins/BaseMixin"
 import BaseRequest from "@/static/BaseRequest";
 import UserError from "@/static/UserError";
+import RequestError from "@/static/RequestError";
 export default{
     layout: "cmsLayout",
     mixins: [BaseMixin],
@@ -81,6 +82,10 @@ export default{
             }
         },
         alertUserError(error){
+            if(error instanceof RequestError){
+                this.alert(error)
+                return
+            }
             var code = error instanceof Error ? error.message : error
             this.alert(UserError.text(code))
         },

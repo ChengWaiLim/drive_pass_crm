@@ -9,6 +9,7 @@ import Swal from 'sweetalert2'
 import jwt from "jsonwebtoken"
 import moment from "moment"
 import Cookies from 'js-cookie'
+import RequestError from "@/static/RequestError"
 export default{
     methods: {
         customSearch (currentValue, search, item) {
@@ -23,9 +24,21 @@ export default{
                 coachName: null,
                 phone: null,
                 license: null,
-                area: null,
+                area: [],
                 language: null,
                 price: null,
+                isEnable: false,
+                createdDate: null,
+            }
+        },
+        newEmptyLicense(){
+            return {
+                ID: null,
+                code: null,
+                name_zh: null,
+                name_cn: null,
+                name_en: null,
+                isEnable: false,
                 createdDate: null,
             }
         },
@@ -37,6 +50,24 @@ export default{
                 address: null,
             }
         },
+        languageCodeToName(code){
+            if(code == "ZH")
+                return "中文繁體"
+            else if(code == "CN")
+                return "中文簡體"
+            else if(code == "EN")
+                return "英文"
+            else
+                return code
+        },
+        areaToName(code){
+            if(code == "KW&NT")
+                return "九龍及新界"
+            else if(code == "HK")
+                return "香港"
+            else
+                return code
+        },
         isCurrentTokenValid(){
             var token = Cookies.get("admin-token")
             if(token == null || token == "null")
@@ -45,6 +76,8 @@ export default{
             return moment(decoded.expiryDate).isAfter(moment())
         },
         alert(title, content, icon, callback = function() {}) {
+            if(title instanceof RequestError)
+                title = title.message
             Swal.fire({
                 icon: icon != null ? icon : 'error',
                 title: title,

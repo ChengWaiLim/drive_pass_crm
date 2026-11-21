@@ -16,6 +16,15 @@
         <template v-slot:item.price="{ item }">
             ${{showStripePrice(item.price)}}
         </template>
+        <template v-slot:item.area="{ item }">
+            {{areaToName(item.area)}}
+        </template>
+        <template v-slot:item.language="{ item }">
+            {{languageCodeToName(item.language)}}
+        </template>
+        <template v-slot:item.isEnable="{ item }">
+            <span :class="item.isEnable ? 'text-success' : 'text-error'">{{item.isEnable ? '是' : '否'}}</span>
+        </template>
         <template v-slot:item.actions="{ item }">
             <v-btn fab dark x-small color="cyan" @click="handleEdit(item)">
                 <v-icon dark> mdi-pencil </v-icon>
@@ -26,10 +35,10 @@
         </template>
     </v-data-table>
     <v-dialog v-model="editDialogVisible" width="80%">
-        <coach-form title="修改師傅" :item="editedItem" :categoryList="category" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
+        <coach-form title="修改師傅" :item="editedItem" :areaList="areaList" :licenseList="licenseList" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
     </v-dialog>
     <v-dialog v-model="newDialogVisible" width="80%">
-        <coach-form title="創建師傅" :item="newItem" :categoryList="category" @close="handleCloseNew" @confirm="handleConfirmNew"/>
+        <coach-form title="創建師傅" :item="newItem" :areaList="areaList" :licenseList="licenseList" @close="handleCloseNew" @confirm="handleConfirmNew"/>
     </v-dialog>
 </v-card>
 </template>
@@ -38,6 +47,7 @@ import Vue from "vue";
 import BaseMixin from "@/components/mixins/BaseMixin"
 import BaseRequest from "@/static/BaseRequest";
 import CoachError from "@/static/CoachError";
+import RequestError from "@/static/RequestError";
 export default{
     layout: "cmsLayout",
     mixins: [BaseMixin],
@@ -50,8 +60,12 @@ export default{
         async init(){
             try{
                 this.$nuxt.$loading.start()
-                var res = await BaseRequest.getCoachAll()
-                this.coach = res.Coach
+                var coachResult = await BaseRequest.getCoachAll()
+                var areaResult = await BaseRequest.getAreaAll()
+                var licenseResult = await BaseRequest.getLicenseAll()
+                this.coach = coachResult.Coach
+                this.areaList = areaResult.Area
+                this.licenseList = licenseResult.License
                 this.$nuxt.$loading.finish()
             }catch(e){
                 this.$nuxt.$loading.finish()
@@ -85,6 +99,10 @@ export default{
             }
         },
         alertCoachError(error){
+            if(error instanceof RequestError){
+                this.alert(error)
+                return
+            }
             var code = error instanceof Error ? error.message : error
             this.alert(CoachError.text(code))
         },
@@ -112,10 +130,6 @@ export default{
         },
         async handleConfirmNew(file){
             try{
-                if(file != null){
-                    var imageResult = await BaseRequest.uploadImage({file: file})
-                    this.newItem.path = imageResult.path
-                }
                 this.checkCoachValid(this.newItem)
                 this.newDialogVisible = false
                 this.newItem.price = this.newItem.price * 100
@@ -152,7 +166,8 @@ export default{
             newDialogVisible: false,
             search: "",
             coach: [],
-            category: [],
+            areaList: [],
+            licenseList: [],
             headers: [
                 {
                     text: '師傅名稱',
@@ -184,6 +199,11 @@ export default{
                     filterable: true,
                     value: 'language',
                 },
+                {
+                    text: '啟用',
+                    filterable: true,
+                    value: 'isEnable',
+                },
                 // {
                 //     text: 'Sold Out',
                 //     filterable: true,
@@ -196,4 +216,10 @@ export default{
 }
 </script>
 <style lang="sass" scoped>
+.text-success
+    color: #4CAF50 !important
+    font-weight: bold
+.text-error
+    color: #F44336 !important
+    font-weight: bold
 </style>

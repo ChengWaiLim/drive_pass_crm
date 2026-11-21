@@ -31,6 +31,7 @@
 import Vue from "vue";
 import Cookies from 'js-cookie'
 import BaseMixin from "@/components/mixins/BaseMixin"
+import BaseRequest from "@/static/BaseRequest"
 export default{
     mixins: [BaseMixin],
     async mounted(){
@@ -40,6 +41,7 @@ export default{
     methods: {
         handleLogout(){
             Cookies.set("admin-token", null)
+            BaseRequest.clearLocalStorage()
             this.$router.push("/")
         }
     },
@@ -47,6 +49,7 @@ export default{
         return {
             items: [
                 { title: '師傅', icon: 'mdi-school', route: "/auth/coach" },
+                { title: '牌照', icon: 'mdi-certificate', route: "/auth/license" },
             ],
             right: null,
             testingTitle: process.env.testingTitle
