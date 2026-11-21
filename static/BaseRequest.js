@@ -92,6 +92,18 @@ class BaseRequest {
         var res = await axios.post(serverUrl + "/admin/license", parameters)
         return BaseRequest.result(res)
     }
+    static async getExamAddressAll(){
+        var res = await axios.get(serverUrl + "/admin/examAddress", {})
+        return BaseRequest.result(res)
+    }
+    static async updateExamAddress(parameters){
+        var res = await axios.put(serverUrl + "/admin/examAddress", parameters)
+        return BaseRequest.result(res)
+    }
+    static async addExamAddress(parameters){
+        var res = await axios.post(serverUrl + "/admin/examAddress", parameters)
+        return BaseRequest.result(res)
+    }
 }
 
 BaseRequest.areaAllKey = "BaseRequest_areaAll"

@@ -50,6 +50,7 @@ export default{
             items: [
                 { title: '師傅', icon: 'mdi-school', route: "/auth/coach" },
                 { title: '牌照', icon: 'mdi-certificate', route: "/auth/license" },
+                { title: '考試地址', icon: 'mdi-map-marker', route: "/auth/examAddress" },
             ],
             right: null,
             testingTitle: process.env.testingTitle

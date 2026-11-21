@@ -50,6 +50,18 @@ export default{
                 address: null,
             }
         },
+        newEmptyExamAddress(){
+            return {
+                addressCode: null,
+                district_zh: null,
+                district_cn: null,
+                district_en: null,
+                address_zh: null,
+                address_cn: null,
+                address_en: null,
+                isEnable: null,
+            }
+        },
         languageCodeToName(code){
             if(code == "ZH")
                 return "中文繁體"

@@ -158,16 +158,16 @@ export default{
                     filterable: true,
                     value: 'name_zh',
                 },
-                {
-                    text: '簡體名稱',
-                    filterable: true,
-                    value: 'name_cn',
-                },
-                {
-                    text: '英文名稱',
-                    filterable: true,
-                    value: 'name_en',
-                },
+                // {
+                //     text: '簡體名稱',
+                //     filterable: true,
+                //     value: 'name_cn',
+                // },
+                // {
+                //     text: '英文名稱',
+                //     filterable: true,
+                //     value: 'name_en',
+                // },
                 {
                     text: '啟用',
                     filterable: true,
