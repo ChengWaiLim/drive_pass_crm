@@ -22,9 +22,11 @@ export default{
         newEmptyCoach(){
             return {
                 coachName: null,
+                password: null,
                 phone: null,
-                license: null,
+                license: [],
                 area: [],
+                examAddress: [],
                 language: null,
                 price: null,
                 isEnable: false,

@@ -35,10 +35,10 @@
         </template>
     </v-data-table>
     <v-dialog v-model="editDialogVisible" width="80%">
-        <coach-form title="修改師傅" :item="editedItem" :areaList="areaList" :licenseList="licenseList" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
+        <coach-form title="修改師傅" :item="editedItem" :examAddressList="examAddressList" :areaList="areaList" :licenseList="licenseList" @close="handleCloseEdit" @confirm="handleConfirmEdit"/>
     </v-dialog>
     <v-dialog v-model="newDialogVisible" width="80%">
-        <coach-form title="創建師傅" :item="newItem" :areaList="areaList" :licenseList="licenseList" @close="handleCloseNew" @confirm="handleConfirmNew"/>
+        <coach-form title="創建師傅" :item="newItem" isCreateMode :examAddressList="examAddressList"  :areaList="areaList" :licenseList="licenseList" @close="handleCloseNew" @confirm="handleConfirmNew"/>
     </v-dialog>
 </v-card>
 </template>
@@ -63,9 +63,11 @@ export default{
                 var coachResult = await BaseRequest.getCoachAll()
                 var areaResult = await BaseRequest.getAreaAll()
                 var licenseResult = await BaseRequest.getLicenseAll()
+                var examAddressResult = await BaseRequest.getExamAddressAll()
                 this.coach = coachResult.Coach
                 this.areaList = areaResult.Area
                 this.licenseList = licenseResult.License
+                this.examAddressList = examAddressResult.ExamAddress
                 this.$nuxt.$loading.finish()
             }catch(e){
                 this.$nuxt.$loading.finish()
@@ -109,12 +111,16 @@ export default{
         checkCoachValid(coach){
             if(coach.coachName == null || String(coach.coachName).trim() == "")
                 throw new Error(CoachError.COACH_NAME_INVALID)
+            else if(coach.isSetPassword && (coach.password == null || String(coach.password).length < 6))
+                throw new Error(CoachError.PASSWORD_INVALID)
             else if(coach.phone == null || coach.phone === "" || isNaN(coach.phone) || Number(coach.phone) <= 0)
                 throw new Error(CoachError.PHONE_INVALID)
-            else if(coach.license == null || String(coach.license).trim() == "")
+            else if(!Array.isArray(coach.license) || coach.license.length == 0)
                 throw new Error(CoachError.LICENSE_INVALID)
-            else if(coach.area == null || String(coach.area).trim() == "")
+            else if(!Array.isArray(coach.area) || coach.area.length == 0)
                 throw new Error(CoachError.AREA_INVALID)
+            else if(!Array.isArray(coach.examAddress) || coach.examAddress.length == 0)
+                throw new Error(CoachError.EXAM_ADDRESS_INVALID)
             else if(coach.language == null || coach.language === "")
                 throw new Error(CoachError.LANGUAGE_INVALID)
             else if(coach.price == null || coach.price === "" || isNaN(coach.price) || Number(coach.price) <= 0)
@@ -168,6 +174,7 @@ export default{
             coach: [],
             areaList: [],
             licenseList: [],
+            examAddressList: [],
             headers: [
                 {
                     text: '師傅名稱',
