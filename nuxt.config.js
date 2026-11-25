@@ -36,6 +36,6 @@ module.exports = {
   },
   env: {
     testingTitle: "",
-    serverUrl: "https://cm7xa7743k.execute-api.ap-east-1.amazonaws.com"
+    serverUrl: "https://5zl7ult76h.execute-api.ap-east-1.amazonaws.com/"
   },
 }

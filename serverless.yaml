@@ -2,7 +2,8 @@ service: drive-pass-crm
 frameworkVersion: '3'
 provider:
   name: aws
-  stage: dev
+  stage: drive-pass-crm
+  stackName: drive-pass-crm-dev
   ecr:
     images:
       drive-pass-crm:
@@ -29,16 +30,16 @@ functions:
     events:
       - http: ANY /
       - http: ANY /{proxy+}
-plugins:
-  - serverless-apigw-binary
-  - serverless-domain-manager
+# plugins:
+  # - serverless-apigw-binary
+  # - serverless-domain-manager
 
-custom:
-  customDomain:
-    domainName: houseofjoyhk.com
-    basePath: 'drive-pass-crm'
-    stage: prd
-    createRoute53Record: true
-  apigwBinary:
-    types:
-      - "*/*"
+# custom:
+#   customDomain:
+#     domainName: houseofjoyhk.com
+#     basePath: 'drive-pass-crm'
+#     stage: prd
+#     createRoute53Record: true
+#   apigwBinary:
+#     types:
+#       - "*/*"
